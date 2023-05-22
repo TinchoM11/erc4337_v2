@@ -4,6 +4,8 @@ import address from "./address";
 import transfer from "./transfer";
 import erc20Transfer from "./erc20Transfer";
 import erc20Approve from "./erc20Approve";
+import completeSwap from "./completeSwap";
+import completeBridge from "./completeBridge";
 import batchErc20Transfer from "./batchErc20Transfer";
 
 const program = new Command();
@@ -94,4 +96,35 @@ program
     })
   );
 
+program
+  .command("completeSwap")
+  .description("Swap from ERC20 to another token")
+  .option(
+    "-dr, --dryRun",
+    "Builds the UserOperation without calling eth_sendUserOperation"
+  )
+  .option("-pm, --withPaymaster", "Use a paymaster for this transaction")
+  .action(async (opts) =>
+    completeSwap({
+      dryRun: Boolean(opts.dryRun),
+      withPM: Boolean(opts.withPaymaster),
+    })
+  );
+
+  program
+  .command("completeBridge")
+  .description("Bridge between chains")
+  .option(
+    "-dr, --dryRun",
+    "Builds the UserOperation without calling eth_sendUserOperation"
+  )
+  .option("-pm, --withPaymaster", "Use a paymaster for this transaction")
+  .action(async (opts) =>
+    completeBridge({
+      dryRun: Boolean(opts.dryRun),
+      withPM: Boolean(opts.withPaymaster),
+    })
+  );
+
+  
 program.parse();

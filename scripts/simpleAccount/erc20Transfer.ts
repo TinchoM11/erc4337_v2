@@ -1,9 +1,18 @@
 import { ethers } from "ethers";
 import { ERC20_ABI } from "../../src";
 // @ts-ignore
-import config from "../../config.json";
 import { Client, Presets } from "userop";
 import { CLIOpts } from "../../src";
+
+require("dotenv").config();
+const RPC = process.env.RPC_URL as string;
+const PRIVATE_KEY = process.env.PRIVATE_KEY as string;
+const ENTRY_POINT = process.env.ENTRYPOINT as string;
+const SIMPLE_ACCOUNT_FACTORY = process.env.SIMPLE_ACCOUNT_FACTORY as string;
+const PAYMASTER = {
+  "rpcUrl": process.env.PAYMASTER_URL as string,
+  "context": { "type": process.env.PAYMASTER_CONTEXT},
+};
 
 export default async function main(
   tkn: string,
@@ -13,20 +22,21 @@ export default async function main(
 ) {
   const paymaster = opts.withPM
     ? Presets.Middleware.verifyingPaymaster(
-        config.paymaster.rpcUrl,
-        config.paymaster.context
+        PAYMASTER.rpcUrl,
+        PAYMASTER.context
       )
     : undefined;
   const simpleAccount = await Presets.Builder.SimpleAccount.init(
-    new ethers.Wallet(config.signingKey),
-    config.rpcUrl,
-    config.entryPoint,
-    config.simpleAccountFactory,
+    new ethers.Wallet(PRIVATE_KEY),
+    RPC,
+    ENTRY_POINT,
+    SIMPLE_ACCOUNT_FACTORY,
     paymaster
   );
-  const client = await Client.init(config.rpcUrl, config.entryPoint);
+  simpleAccount.useDefaults({ callGasLimit: 60000 });
+  const client = await Client.init(RPC,ENTRY_POINT);
 
-  const provider = new ethers.providers.JsonRpcProvider(config.rpcUrl);
+  const provider = new ethers.providers.JsonRpcProvider("https://blue-fragrant-needle.matic.quiknode.pro/398157348b1378b7e59f4ccf29e1b10706fe8d97/");
   const token = ethers.utils.getAddress(tkn);
   const to = ethers.utils.getAddress(t);
   const erc20 = new ethers.Contract(token, ERC20_ABI, provider);

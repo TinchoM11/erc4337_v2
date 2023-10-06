@@ -32,7 +32,7 @@ export const ERC721_ABI = [
 export const UNISWAP_V2_ROUTER_ABI = [
   // Read-Only Functions
   "function getAmountsOut(uint256 amountIn, address[] path) view returns (uint256[] amounts)",
-
+  "function factory() view returns (address)",
   // Authenticated Functions
   "function swapExactETHForTokens(uint amountOutMin, address[] path, address to, uint deadline)",
   "function swapExactTokensForETH(uint256 amountIn, uint amountOutMin, address[] path, address to, uint deadline)",

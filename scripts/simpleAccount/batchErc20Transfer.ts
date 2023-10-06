@@ -4,12 +4,6 @@ import { ERC20_ABI, CLIOpts } from "../../src";
 // @ts-ignore
 import config from "../../config.json";
 
-// This example requires several layers of calls:
-// EntryPoint
-//  ┕> sender.executeBatch
-//    ┕> token.transfer (recipient 1)
-//    ⋮
-//    ┕> token.transfer (recipient N)
 export default async function main(
   tkn: string,
   t: Array<string>,

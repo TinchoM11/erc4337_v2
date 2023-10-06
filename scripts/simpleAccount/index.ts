@@ -7,6 +7,8 @@ import erc20Approve from "./erc20Approve";
 import completeSwap from "./completeSwap";
 import completeBridge from "./completeBridge";
 import batchErc20Transfer from "./batchErc20Transfer";
+import uniswap from "./unsiwap";
+import squid from "./squidBridge";
 
 const program = new Command();
 
@@ -111,7 +113,7 @@ program
     })
   );
 
-  program
+program
   .command("completeBridge")
   .description("Bridge between chains")
   .option(
@@ -126,5 +128,34 @@ program
     })
   );
 
-  
+program
+  .command("uniswap")
+  .description("Bridge between chains")
+  .option(
+    "-dr, --dryRun",
+    "Builds the UserOperation without calling eth_sendUserOperation"
+  )
+  .option("-pm, --withPaymaster", "Use a paymaster for this transaction")
+  .action(async (opts) =>
+    uniswap({
+      dryRun: Boolean(opts.dryRun),
+      withPM: Boolean(opts.withPaymaster),
+    })
+  );
+
+program
+  .command("squid")
+  .description("Bridge with Squid")
+  .option(
+    "-dr, --dryRun",
+    "Builds the UserOperation without calling eth_sendUserOperation"
+  )
+  .option("-pm, --withPaymaster", "Use a paymaster for this transaction")
+  .action(async (opts) =>
+    squid({
+      dryRun: Boolean(opts.dryRun),
+      withPM: Boolean(opts.withPaymaster),
+    })
+  );
+
 program.parse();

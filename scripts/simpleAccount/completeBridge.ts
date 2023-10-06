@@ -16,9 +16,11 @@ import axios from "axios";
 
 export default async function main(opts: CLIOpts) {
   const provider = new ethers.providers.JsonRpcProvider(RPC);
-  const paymaster = opts.withPM
-    ? Presets.Middleware.verifyingPaymaster(PAYMASTER.rpcUrl, PAYMASTER.context)
-    : undefined;
+  const paymaster = Presets.Middleware.verifyingPaymaster(
+    PAYMASTER.rpcUrl,
+    PAYMASTER.context
+  );
+
   const simpleAccount = await Presets.Builder.SimpleAccount.init(
     new ethers.Wallet(PRIVATE_KEY),
     RPC,
@@ -26,26 +28,26 @@ export default async function main(opts: CLIOpts) {
     SIMPLE_ACCOUNT_FACTORY,
     paymaster
   );
-  simpleAccount.useDefaults({ callGasLimit: 2500000 });
+  simpleAccount.useDefaults({ callGasLimit: 800000 });
   const client = await Client.init(RPC, ENTRY_POINT);
 
   // Gets tx data from odosAPI
   const params = {
-    fromChain: 56,
-    toChain: 137,
-    fromToken: "USDC",
-    toToken: "USDC", // TODO: for rn we only bridge to the same token as wormhole only supports that
-    fromAmount: "11295915297450986365",
-    fromAddress: "0xa81D8dD4550Ee126Ab77De7845b4359AA7afae22",
-    toAddress: "0xa81D8dD4550Ee126Ab77De7845b4359AA7afae22",
+    fromChain: 137,
+    toChain: 56,
+    fromToken: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+    toToken: "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d",
+    fromAmount: "5000000",
+    fromAddress: "0xab0f93fdb3866b57339a950e8b02c19fa196b245",
+    toAddress: "0xab0f93fdb3866b57339a950e8b02c19fa196b245",
     order: "RECOMMENDED",
-    allowBridges: "hyphen"
   };
 
   const quote = (await axios.get(`https://li.quest/v1/quote`, { params })).data;
-  console.log("Quote: ", quote.transactionRequest);
-  // spenderAddress is the "swap Contract" that will be used (given by swapTxData / OdosAPI)
-  // This is used for giving approve/allowance before the swap to this spender
+  console.log("Quote: ", quote);
+
+  //spenderAddress is the "swap Contract" that will be used (given by swapTxData / OdosAPI)
+  //This is used for giving approve/allowance before the swap to this spender
   const spenderAddress = ethers.utils.getAddress(
     quote.estimate.approvalAddress
   );
@@ -65,10 +67,11 @@ export default async function main(opts: CLIOpts) {
     const data: Array<any> = [];
 
     const actualAllowance = await erc20.allowance(sender, spenderAddress);
-
+    console.log("Actual Allowance", actualAllowance.toString());
     // We check allowance. If allowance isn't enough, we will approve and Swap in the same transaction
     // If allowance is already enough, we will only make the swap.
     if (actualAllowance.lt(quote.action.fromAmount)) {
+      console.log("AAAAAAAa");
       dest.push(erc20.address);
       data.push(
         erc20.interface.encodeFunctionData("approve", [
@@ -81,7 +84,6 @@ export default async function main(opts: CLIOpts) {
     // Push to the array of "dest" and "data" the swap function
     dest.push(quote?.transactionRequest.to);
     data.push(quote?.transactionRequest.data);
-
     // Construct userOperation (batch for ApproveAndSwap)
     userOperation = await client.sendUserOperation(
       simpleAccount.executeBatch(dest, data),
@@ -109,15 +111,16 @@ export default async function main(opts: CLIOpts) {
   console.log("Waiting for transaction...");
   const ev = await userOperation.wait();
   console.log(`Transaction hash: ${ev?.transactionHash ?? null}`);
-  if (quote.tool === "hyphen") await callExitEndpoint(ev.transactionHash, params.fromChain);
+  if (quote.tool === "hyphen")
+    await callExitEndpoint(ev.transactionHash, params.fromChain);
 }
-
 
 const maxDuration = 15 * 60 * 1000; // 15 minutes
 let startTime: number;
 
 async function callExitEndpoint(depositHash: string, chain: number) {
-  const endpoint = "https://hyphen-v2-api.biconomy.io/api/v1/insta-exit/execute";
+  const endpoint =
+    "https://hyphen-v2-api.biconomy.io/api/v1/insta-exit/execute";
   if (!startTime) {
     startTime = Date.now();
   }
@@ -154,5 +157,3 @@ async function callExitEndpoint(depositHash: string, chain: number) {
     }
   }
 }
-
-

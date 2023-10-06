@@ -9,9 +9,9 @@ const RPC = process.env.RPC_URL as string;
 const PRIVATE_KEY = process.env.PRIVATE_KEY as string;
 const ENTRY_POINT = process.env.ENTRYPOINT as string;
 const SIMPLE_ACCOUNT_FACTORY = process.env.SIMPLE_ACCOUNT_FACTORY as string;
-const PAYMASTER = {
-  "rpcUrl": process.env.PAYMASTER_URL as string,
-  "context": { "type": process.env.PAYMASTER_CONTEXT},
+const PAYG_PAYMASTER = {
+  rpcUrl: process.env.PAYMASTER_URL as string,
+  context: { type: process.env.PAYMASTER_CONTEXT },
 };
 
 export default async function main(
@@ -22,8 +22,8 @@ export default async function main(
 ) {
   const paymaster = opts.withPM
     ? Presets.Middleware.verifyingPaymaster(
-        PAYMASTER.rpcUrl,
-        PAYMASTER.context
+        PAYG_PAYMASTER.rpcUrl,
+        PAYG_PAYMASTER.context
       )
     : undefined;
   const simpleAccount = await Presets.Builder.SimpleAccount.init(
@@ -34,9 +34,9 @@ export default async function main(
     paymaster
   );
   simpleAccount.useDefaults({ callGasLimit: 60000 });
-  const client = await Client.init(RPC,ENTRY_POINT);
+  const client = await Client.init(RPC, ENTRY_POINT);
 
-  const provider = new ethers.providers.JsonRpcProvider("https://blue-fragrant-needle.matic.quiknode.pro/398157348b1378b7e59f4ccf29e1b10706fe8d97/");
+  const provider = new ethers.providers.JsonRpcProvider(RPC);
   const token = ethers.utils.getAddress(tkn);
   const to = ethers.utils.getAddress(t);
   const erc20 = new ethers.Contract(token, ERC20_ABI, provider);
@@ -44,8 +44,16 @@ export default async function main(
     erc20.symbol(),
     erc20.decimals(),
   ]);
-  const amount = ethers.utils.parseUnits(amt, decimals);
+
+  const balance = await provider.getBalance(
+    simpleAccount.getSender(),
+    "latest"
+  );
+
+  console.log(`Sender balance: ${ethers.utils.formatEther(balance)}`);
+
   console.log(`Transferring ${amt} ${symbol}...`);
+  const amount = ethers.utils.parseUnits(amt, decimals);
 
   const res = await client.sendUserOperation(
     simpleAccount.execute(

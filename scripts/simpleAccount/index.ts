@@ -8,7 +8,7 @@ import completeSwap from "./completeSwap";
 import completeBridge from "./completeBridge";
 import batchErc20Transfer from "./batchErc20Transfer";
 import uniswap from "./unsiwap";
-import squid from "./squidBridge";
+import synapseBridge from "./synapseBridge";
 
 const program = new Command();
 
@@ -144,15 +144,15 @@ program
   );
 
 program
-  .command("squid")
-  .description("Bridge with Squid")
+  .command("synapseBridge")
+  .description("Bridge with Synapse to DFK")
   .option(
     "-dr, --dryRun",
     "Builds the UserOperation without calling eth_sendUserOperation"
   )
   .option("-pm, --withPaymaster", "Use a paymaster for this transaction")
   .action(async (opts) =>
-    squid({
+    synapseBridge({
       dryRun: Boolean(opts.dryRun),
       withPM: Boolean(opts.withPaymaster),
     })

@@ -15,6 +15,7 @@
   "dependencies": {
     "@lifi/sdk": "^1.7.2",
     "@permissivelabs/client": "^0.2.31",
+    "@synapsecns/sdk-router": "^0.2.19",
     "axios": "^1.2.3",
     "commander": "^10.0.0",
     "dotenv": "^16.0.3",

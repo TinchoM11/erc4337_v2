@@ -32,16 +32,16 @@ export default async function main(opts: CLIOpts) {
 
   // Gets TX Quote First
   let swapData = JSON.stringify({
-    chainId: 10,
+    chainId: 137,
     inputTokens: [
       {
-        tokenAddress: "0x7F5c764cBc14f9669B88837ca1490cCa17c31607",
-        amount: "3701874",
+        tokenAddress: "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        amount: "4000000",
       },
     ],
     outputTokens: [
       {
-        tokenAddress: "0x0000000000000000000000000000000000000000",
+        tokenAddress: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
         proportion: 1,
       },
     ],

@@ -37,9 +37,9 @@ export default async function main(opts: CLIOpts) {
     toChain: 56,
     fromToken: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
     toToken: "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d",
-    fromAmount: "5000000",
-    fromAddress: "0xab0f93fdb3866b57339a950e8b02c19fa196b245",
-    toAddress: "0xab0f93fdb3866b57339a950e8b02c19fa196b245",
+    fromAmount: "2779230",
+    fromAddress: "0x2934DBe013925607EF024CD584B0Ee3f340D4546",
+    toAddress: "0x2934DBe013925607EF024CD584B0Ee3f340D4546",
     order: "RECOMMENDED",
   };
 
@@ -71,7 +71,6 @@ export default async function main(opts: CLIOpts) {
     // We check allowance. If allowance isn't enough, we will approve and Swap in the same transaction
     // If allowance is already enough, we will only make the swap.
     if (actualAllowance.lt(quote.action.fromAmount)) {
-      console.log("AAAAAAAa");
       dest.push(erc20.address);
       data.push(
         erc20.interface.encodeFunctionData("approve", [

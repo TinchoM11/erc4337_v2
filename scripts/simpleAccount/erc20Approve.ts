@@ -44,9 +44,9 @@ export default async function main(
 
   const res = await client.sendUserOperation(
     simpleAccount.execute(
-      erc20.address,
-      0,
-      erc20.interface.encodeFunctionData("approve", [
+      erc20.address, // TO
+      0, // VALEUE
+      erc20.interface.encodeFunctionData("approve", [ // DATA OF THE TX
         spender,
         amount,
       ])

@@ -41,9 +41,6 @@ export default async function main(opts: CLIOpts) {
     provider
   );
 
-  const factory = await swapContract.factory()
-  console.log("Factory", factory)
-
   const deadline = (Math.floor(Date.now() / 1000) + 60 * 20).toString();
 
   // Gets the min amount aprox

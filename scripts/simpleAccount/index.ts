@@ -6,6 +6,7 @@ import erc20Transfer from "./erc20Transfer";
 import erc20Approve from "./erc20Approve";
 import completeSwap from "./completeSwap";
 import completeBridge from "./completeBridge";
+import redeem from "./redeem";
 import batchErc20Transfer from "./batchErc20Transfer";
 import uniswap from "./unsiwap";
 import synapseBridge from "./synapseBridge";
@@ -157,5 +158,23 @@ program
       withPM: Boolean(opts.withPaymaster),
     })
   );
+
+program
+  .command("redeem")
+  .description("Redeem Transaction Wormhole")
+  .option(
+    "-dr, --dryRun",
+    "Builds the UserOperation without calling eth_sendUserOperation"
+  )
+  .option("-pm, --withPaymaster", "Use a paymaster for this transaction")
+  .action(async (opts) => {
+    const result = await redeem();
+    if (result === false) {
+      console.error("Redeem failed");
+      // Tratar el caso en que redeem devuelva false si es necesario
+    } else {
+      console.log("Redeem successful");
+    }
+  });
 
 program.parse();

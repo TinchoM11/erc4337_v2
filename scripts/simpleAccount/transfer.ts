@@ -29,6 +29,15 @@ export default async function main(t: string, amt: string, opts: CLIOpts) {
   const target = ethers.utils.getAddress(t);
   const value = ethers.utils.parseEther(amt);
 
+  const provider = new ethers.providers.JsonRpcProvider(RPC);
+
+  const balance = await provider.getBalance(
+    simpleAccount.getSender(),
+    "latest"
+  );
+
+  console.log(`Sender balance: `, balance);
+
   const res = await client.sendUserOperation(
     simpleAccount.execute(target, value, "0x"),
 
@@ -42,10 +51,4 @@ export default async function main(t: string, amt: string, opts: CLIOpts) {
   console.log("Waiting for transaction...");
   const event = await res.wait();
   console.log(`Transaction hash: ${event?.transactionHash ?? null}`);
-
-  const provider = new ethers.providers.JsonRpcProvider(RPC);
-  const txStatus = await provider.getTransactionReceipt(
-    event?.transactionHash as string
-  );
-  console.log(`Transaction status: ${txStatus?.status ?? null}`);
 }

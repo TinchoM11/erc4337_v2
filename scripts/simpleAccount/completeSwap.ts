@@ -32,25 +32,26 @@ export default async function main(opts: CLIOpts) {
 
   // Gets TX Quote First
   let swapData = JSON.stringify({
-    chainId: 137,
+    chainId: 56,
     inputTokens: [
       {
-        tokenAddress: "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
-        amount: "4000000",
+        tokenAddress: "0x91Ca579B0D47E5cfD5D0862c21D5659d39C8eCf0",
+        amount: "1499193",
       },
     ],
     outputTokens: [
       {
-        tokenAddress: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+        tokenAddress: "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d",
         proportion: 1,
       },
     ],
-    userAddr: "0xAB0F93FdB3866B57339A950e8b02C19fA196B245",
-    slippageLimitPercent: 1,
+    userAddr: "0xf5Dd25a3cd76117f4B11ACE7426FfBE0bE5Ac6d2",
+    slippageLimitPercent: 3,
     sourceBlacklist: [],
     sourceWhitelist: [],
     simulate: false,
     pathViz: false,
+    disableRFQs: true,
   });
 
   const quoteConfig = {
@@ -65,12 +66,12 @@ export default async function main(opts: CLIOpts) {
   };
 
   const quoteData = await axios.request(quoteConfig);
-  console.log("QuoteData: ", quoteData.data);
+
   const pathId = quoteData.data.pathId;
 
   // With the given pathId, we can now assemble the swap transaction
   const data = JSON.stringify({
-    userAddr: "0xAB0F93FdB3866B57339A950e8b02C19fA196B245",
+    userAddr: "0xf5Dd25a3cd76117f4B11ACE7426FfBE0bE5Ac6d2",
     pathId: pathId, // associated to the user address
     simulate: false,
   });
@@ -118,10 +119,11 @@ export default async function main(opts: CLIOpts) {
     //If allowance is already enough, we will only make the swap.
     if (actualAllowance.lt(swapTxData.data.inputTokens[0].amount)) {
       dest.push(erc20.address);
+      console.log("Spender", spenderAddress);
       data.push(
         erc20.interface.encodeFunctionData("approve", [
           spenderAddress,
-          swapTxData.data.inputTokens[0].amount,
+          ethers.constants.MaxUint256,
         ])
       );
     }

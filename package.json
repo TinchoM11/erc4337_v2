@@ -13,6 +13,10 @@
     "simpleAccount": "ts-node scripts/simpleAccount/index.ts"
   },
   "dependencies": {
+    "@certusone/wormhole-sdk": "^0.10.7",
+    "@certusone/wormhole-sdk-proto-web": "^0.0.7",
+    "@improbable-eng/grpc-web": "^0.15.0",
+    "@improbable-eng/grpc-web-node-http-transport": "^0.15.0",
     "@lifi/sdk": "^1.7.2",
     "@permissivelabs/client": "^0.2.31",
     "@synapsecns/sdk-router": "^0.2.19",

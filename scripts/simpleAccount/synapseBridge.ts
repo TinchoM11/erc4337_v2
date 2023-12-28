@@ -53,7 +53,7 @@ export default async function main(opts: CLIOpts) {
     53935, // To Chain
     "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174", // From token Address USDC POL
     "0x3AD9DFE640E1A9Cc1D9B0948620820D975c3803a", // To token Address USDC DFK
-    ethers.BigNumber.from("2000000"), // From Amount
+    ethers.BigNumber.from("2500000"), // From Amount
     deadline, // Deadline
     true // Exclude CCTP
   );
@@ -68,7 +68,7 @@ export default async function main(opts: CLIOpts) {
     137, // From Chain
     53935, // To Chain
     "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174", // From TOKEN
-    ethers.BigNumber.from("2000000"), // Amount
+    ethers.BigNumber.from("2500000"), // Amount
     quote.originQuery, // Origin query from bridgeQuote()
     quote.destQuery // Origin query from bridgeQuote()
   );
@@ -78,17 +78,17 @@ export default async function main(opts: CLIOpts) {
 
   /// WE NEED TO APPROVE THE BRIDGE ROUTER TO SPEND OUR TOKENS FIRST!!!!!
 
-  const res = await client.sendUserOperation(
-    simpleAccount.execute(
-      BridgeTx.to as string, // To Contracto
-      0, // Value Sent
-      BridgeTx.data as string
-    )
-  );
+  // const res = await client.sendUserOperation(
+  //   simpleAccount.execute(
+  //     BridgeTx.to as string, // To Contract
+  //     0, // Value Sent
+  //     BridgeTx.data as string
+  //   )
+  // );
 
-  console.log(`UserOpHash: ${res.userOpHash}`);
+  // console.log(`UserOpHash: ${res.userOpHash}`);
 
-  console.log("Waiting for transaction...");
-  const ev = await res.wait();
-  console.log(`Transaction hash: ${ev?.transactionHash ?? null}`);
+  // console.log("Waiting for transaction...");
+  // const ev = await res.wait();
+  // console.log(`Transaction hash: ${ev?.transactionHash ?? null}`);
 }
